@@ -9,12 +9,12 @@ elixir:
   - 1.4.4
   - 1.4.5
 otp_release:
-  - 19.3
-  - 19.2
-  - 19.1
-  - 19.0
-  - 18.1
   - 18.0
+  - 18.1
+  - 19.0
+  - 19.1
+  - 19.2
+  - 19.3
 matrix:
   include:
     - otp_release: 18.0
@@ -27,10 +27,30 @@ matrix:
       elixir: 1.5.0
     - otp_release: 18.1
       elixir: 1.5.0
+    - otp_release: 19.0
+      elixir: 1.5.0
+    - otp_release: 19.1
+      elixir: 1.5.0
+    - otp_release: 19.2
+      elixir: 1.5.0
     - otp_release: 19.3
       elixir: 1.5.0
     - otp_release: 20.0
       elixir: 1.5.0
+    - otp_release: 18.0
+      elixir: 1.5.1
+    - otp_release: 18.1
+      elixir: 1.5.1
+    - otp_release: 19.0
+      elixir: 1.5.1
+    - otp_release: 19.1
+      elixir: 1.5.1
+    - otp_release: 19.2
+      elixir: 1.5.1
+    - otp_release: 19.3
+      elixir: 1.5.1
+    - otp_release: 20.0
+      elixir: 1.5.1
 addons:
   artifacts:
     debug: true
@@ -39,6 +59,13 @@ addons:
     working_dir: plts
     target_paths:
       - travis_elixir_plts
+before_install:
+  - sudo service --status-all
+  - sudo free -m -t
+  - sudo /etc/init.d/mysql stop
+  - sudo /etc/init.d/postgresql stop
+  - sudo /etc/init.d/redis-server stop
+  - sudo free -m -t
 before_script:
   - export PATH=`pwd`/elixir/bin:$PATH
   - git clone https://github.com/jeremyjh/dialyxir.git
@@ -48,3 +75,6 @@ before_script:
   - cd ..
 script:
   - MIX_ENV=test travis_wait 30 mix dialyzer --plt
+after_failure:
+  - sudo free -m -t
+  - sudo dmesg
